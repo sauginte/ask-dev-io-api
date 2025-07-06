@@ -1,3 +1,5 @@
+import AnswerModel from "../models/answer.js";
+
 const DELETE_BY_ID = async (req, res) => {
   try {
     const answerId = req.params.id;
@@ -6,7 +8,7 @@ const DELETE_BY_ID = async (req, res) => {
     if (!answer) {
       return res
         .status(404)
-        .json({ message: `Answer with id ${id} does not exist` });
+        .json({ message: `Answer with id ${answerId} does not exist` });
     }
 
     return res.status(200).json({

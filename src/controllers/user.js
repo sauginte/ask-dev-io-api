@@ -30,7 +30,14 @@ const SIGN_UP = async (req, res) => {
       jwtToken: token,
     });
   } catch (err) {
-    console.log(err);
+    const DUPLICATE_ERROR_CODE = 11000;
+
+    if (err.code === DUPLICATE_ERROR_CODE) {
+      return res
+        .status(409)
+        .json({ message: "User with this email already exist" });
+    }
+
     return res.status(500).json({ message: "Something went wrong" });
   }
 };

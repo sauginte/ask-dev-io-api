@@ -100,8 +100,8 @@ const DELETE_BY_ID = async (req, res) => {
 
     return res.status(200).json({
       message: "Question was deleted successfully",
-      question,
-      answers,
+      deletedQuestion: question,
+      deletedAnswers: answers,
     });
   } catch (err) {
     console.log(err);

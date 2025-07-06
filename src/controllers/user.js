@@ -31,7 +31,7 @@ const SIGN_UP = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ messgae: "Something went wrong" });
+    return res.status(500).json({ message: "Something went wrong" });
   }
 };
 

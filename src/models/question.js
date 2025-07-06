@@ -4,6 +4,7 @@ const questionSchema = mongoose.Schema({
   id: { type: String, required: true },
   questionText: { type: String, required: true },
   userId: { type: String, required: true },
+  answers: { type: [String], requires: false },
   createdAt: { type: Date, required: true },
 });
 

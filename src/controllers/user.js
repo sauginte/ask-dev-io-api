@@ -5,14 +5,12 @@ import UserModel from "../models/user.js";
 
 const SIGN_UP = async (req, res) => {
   try {
-    const userData = req.body;
     const salt = await bcrypt.genSaltSync(10);
-    const passwordHash = await bcrypt.hashSync(userData.password, salt);
+    const passwordHash = await bcrypt.hashSync(req.body.password, salt);
 
     const newUser = {
+      ...req.body,
       id: uuidv4(),
-      name: userData.name,
-      email: userData.email,
       password: passwordHash,
       dateCreated: new Date(),
     };
@@ -33,13 +31,13 @@ const SIGN_UP = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
+    return res.status(500).json({ messgae: "Something went wrong" });
   }
 };
 
 const LOGIN_USER = async (req, res) => {
   try {
-    const userData = req.body;
-    const user = await UserModel.findOne({ email: userData.email });
+    const user = await UserModel.findOne({ email: req.body.email });
 
     if (!user) {
       return res.status(401).json({
@@ -47,7 +45,7 @@ const LOGIN_USER = async (req, res) => {
       });
     }
     const isPasswordMatch = bcrypt.compareSync(
-      userData.password,
+      req.body.password,
       user.password
     );
 
@@ -68,6 +66,7 @@ const LOGIN_USER = async (req, res) => {
       .json({ message: "User logged in successfully", jwtToken: token });
   } catch (err) {
     console.log(err);
+    return res.status(500).json({ messgae: "Something went wrong" });
   }
 };
 

@@ -14,7 +14,7 @@ import {
 
 const router = express.Router();
 
-router.get("/", auth, GET_ALL_QUESTIONS);
+router.get("/", GET_ALL_QUESTIONS);
 router.post("/insert", auth, validate(questionSchema), INSERT);
 router.get("/:id/answers", auth, GET_QUESTION_ANSWERS_BY_ID);
 router.post(

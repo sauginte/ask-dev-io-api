@@ -8,6 +8,20 @@ const SIGN_UP = async (req, res) => {
     const salt = await bcrypt.genSaltSync(10);
     const passwordHash = await bcrypt.hashSync(req.body.password, salt);
 
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(req.body.email)) {
+      return res.status(400).json({
+        message: "Incorrect email format",
+      });
+    }
+
+    const passwordRegex = /[0-9]/;
+    if (!passwordRegex.test(req.body.password)) {
+      return res.status(400).json({
+        message: "Password must contain at least one number",
+      });
+    }
+
     const newUser = {
       ...req.body,
       id: uuidv4(),
@@ -77,4 +91,21 @@ const LOGIN_USER = async (req, res) => {
   }
 };
 
-export { SIGN_UP, LOGIN_USER };
+const GET_USER_ID = (req, res) => {
+  try {
+    const token = req.headers.authorization;
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (res.status === 401) {
+        return res.json({ message: "Authorization problems (bad token)" });
+      }
+      return res.json({
+        userId: decoded.userId,
+      });
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ messgae: "Something went wrong" });
+  }
+};
+
+export { SIGN_UP, LOGIN_USER, GET_USER_ID };

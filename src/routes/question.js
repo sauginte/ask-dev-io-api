@@ -10,13 +10,14 @@ import {
   DELETE_BY_ID,
   GET_QUESTION_ANSWERS_BY_ID,
   INSERT_QUESTION_ANSWER_BY_ID,
+  GET_QUESTIONS_WITH_ANSWERS,
 } from "../controllers/question.js";
 
 const router = express.Router();
 
 router.get("/", GET_ALL_QUESTIONS);
 router.post("/insert", auth, validate(questionSchema), INSERT);
-router.get("/:id/answers", auth, GET_QUESTION_ANSWERS_BY_ID);
+router.get("/:id/answers", GET_QUESTION_ANSWERS_BY_ID);
 router.post(
   "/:id/answers",
   auth,
@@ -24,5 +25,6 @@ router.post(
   INSERT_QUESTION_ANSWER_BY_ID
 );
 router.delete("/:id", auth, DELETE_BY_ID);
+router.get("/", GET_QUESTIONS_WITH_ANSWERS);
 
 export default router;

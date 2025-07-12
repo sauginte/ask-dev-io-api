@@ -2,6 +2,8 @@ import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 import QuestionModel from "../models/question.js";
 import AnswerModel from "../models/answer.js";
+import answer from "../models/answer.js";
+import question from "../models/question.js";
 
 const GET_ALL_QUESTIONS = async (req, res) => {
   try {
@@ -50,7 +52,7 @@ const GET_QUESTION_ANSWERS_BY_ID = async (req, res) => {
         .json({ message: `Question with id ${questionId} does not exist` });
     }
 
-    res.status(200).json({ data: answers });
+    res.status(200).json({ question: question, answer: answers });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Something went wrong" });
@@ -108,10 +110,43 @@ const DELETE_BY_ID = async (req, res) => {
     return res.status(500).json({ message: "Something went wrong" });
   }
 };
+
+const GET_QUESTIONS_WITH_ANSWERS = async (req, res) => {
+  const hasAnswersParam = req.query.hasAnswers;
+  const hasAnswers =
+    hasAnswersParam === "true"
+      ? true
+      : hasAnswersParam === "false"
+      ? false
+      : null;
+
+  const pipeline = [
+    {
+      $lookup: {
+        from: "answers",
+        localField: "id",
+        foreignField: "questionId",
+        as: "answers",
+      },
+    },
+  ];
+
+  if (hasAnswers !== null) {
+    pipeline.push({
+      $match: hasAnswers
+        ? { "answers.0": { $exists: true } }
+        : { "answers.0": { $exists: false } },
+    });
+  }
+
+  const questions = await QuestionModel.aggregate(pipeline);
+  res.status(200).json({ questions });
+};
 export {
   GET_ALL_QUESTIONS,
   INSERT,
   DELETE_BY_ID,
   GET_QUESTION_ANSWERS_BY_ID,
   INSERT_QUESTION_ANSWER_BY_ID,
+  GET_QUESTIONS_WITH_ANSWERS,
 };

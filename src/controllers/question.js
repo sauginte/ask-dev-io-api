@@ -137,8 +137,6 @@ const GET_QUESTIONS_WITH_ANSWERS = async (req, res) => {
       },
     },
   ]);
-  // console.log(questions);
-  console.dir(questions, { depth: null });
   res.status(200).json({ questions });
 };
 export {

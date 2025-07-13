@@ -112,15 +112,7 @@ const DELETE_BY_ID = async (req, res) => {
 };
 
 const GET_QUESTIONS_WITH_ANSWERS = async (req, res) => {
-  const hasAnswersParam = req.query.hasAnswers;
-  const hasAnswers =
-    hasAnswersParam === "true"
-      ? true
-      : hasAnswersParam === "false"
-      ? false
-      : null;
-
-  const pipeline = [
+  const questions = await QuestionModel.aggregate([
     {
       $lookup: {
         from: "answers",
@@ -129,17 +121,24 @@ const GET_QUESTIONS_WITH_ANSWERS = async (req, res) => {
         as: "answers",
       },
     },
-  ];
-
-  if (hasAnswers !== null) {
-    pipeline.push({
-      $match: hasAnswers
-        ? { "answers.0": { $exists: true } }
-        : { "answers.0": { $exists: false } },
-    });
-  }
-
-  const questions = await QuestionModel.aggregate(pipeline);
+    {
+      $addFields: {
+        hasAnswers: { $gt: [{ $size: "$answers" }, 0] },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        id: 1,
+        questionText: 1,
+        createdAt: 1,
+        answers: 1,
+        hasAnswers: 1,
+      },
+    },
+  ]);
+  // console.log(questions);
+  console.dir(questions, { depth: null });
   res.status(200).json({ questions });
 };
 export {

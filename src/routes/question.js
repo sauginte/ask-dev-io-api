@@ -25,6 +25,6 @@ router.post(
   INSERT_QUESTION_ANSWER_BY_ID
 );
 router.delete("/:id", auth, DELETE_BY_ID);
-router.get("/", GET_QUESTIONS_WITH_ANSWERS);
+router.get("/withAnswers", GET_QUESTIONS_WITH_ANSWERS);
 
 export default router;
